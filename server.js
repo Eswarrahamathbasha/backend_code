@@ -15,7 +15,7 @@ const app = express();
 // Middleware - IMPORTANT: Order matters!
 app.use(cors({
   origin: ['https://project-manager-react-liard.vercel.app', 'http://localhost:3000'], // Add all possible origins
-  methods: ['GET', 'POST', 'OPTIONS'], // Explicitly allow POST
+  methods: ['GET', 'POST', 'PUT', 'OPTIONS'], // Explicitly allow POST
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
