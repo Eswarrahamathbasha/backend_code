@@ -28,6 +28,10 @@ app.use((err, req, res, next) => {
     });
   });
 
+  app.get('/', function(req, res) {
+    res.send('Its deployed');
+  });
+
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
