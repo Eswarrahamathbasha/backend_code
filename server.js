@@ -11,40 +11,33 @@ connectDB(); // Database connection
 const app = express();
 
 // Middleware
-app.use(cors()); // Add CORS middleware
+// app.use(cors()); // Add CORS middleware
+// Middleware - IMPORTANT: Order matters!
+app.use(cors({
+  origin: ['https://react-liard.vercel.app', 'http://localhost:3000'], // Add all possible origins
+  methods: ['GET', 'POST', 'OPTIONS'], // Explicitly allow POST
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api/user', userRoutes);
 app.use('/api/webAppRoutes', webAppRoutes)
 
-// Global Error Handler
+// Error handling middleware
 app.use((err, req, res, next) => {
-  const statusCode = err.statusCode || 500;
-  res.status(statusCode).json({
+  console.error(err); // Log the full error for debugging
+  res.status(err.status || 500).json({
     success: false,
     message: err.message || 'Internal Server Error',
-    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
   });
 });
 
 app.get('/', function (req, res) {
   res.send('Its deployed');
-});
-
-//for not getting cores errors
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Headers", "*"
-    //"Origin, X-Requested-With, Content-Type, Accept, Authorization"
-  );
-
-  if (req.method === 'OPTIONS') {
-    res.header('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, PATCH');
-    return res.status(200).json({});
-  }
-  next();
 });
 
 const PORT = process.env.PORT || 3000;
