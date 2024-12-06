@@ -1,7 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const { jwtConfig } = require('../config/jwt.config');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 const { signup } = require('../controllers/userController');
 const { signin } = require('../controllers/userController');
