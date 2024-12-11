@@ -1,7 +1,9 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const userRoutes = require('./routes/userRoutes');
-const webAppRoutes = require('./routes/webAppRotes')
+const webAppRoutes = require('./routes/webAppRotes');
+const organizationRoutes = require('./routes/organizationRoutes');
+const projectRoutes = require('./routes/projectRoutes');
 const connectDB = require('./config/db');
 const cors = require('cors');
 
@@ -14,7 +16,7 @@ const app = express();
 // app.use(cors()); // Add CORS middleware
 // Middleware - IMPORTANT: Order matters!
 app.use(cors({
-  origin: ['https://project-manager-react-liard.vercel.app', 'http://localhost:3000', 'http://localhost:3001', '*'], // Add all possible origins
+  origin: ['https://project-manager-react-liard.vercel.app', 'http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002', '*'], // Add all possible origins
   methods: ['GET', 'POST', 'PUT', 'OPTIONS'], // Explicitly allow POST
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
@@ -24,7 +26,9 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api/user', userRoutes);
-app.use('/api/webAppRoutes', webAppRoutes)
+app.use('/api/webAppRoutes', webAppRoutes);
+app.use('/api/org', organizationRoutes);
+app.use('/api/proj', projectRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
