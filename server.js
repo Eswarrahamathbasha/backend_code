@@ -4,6 +4,8 @@ const userRoutes = require('./routes/userRoutes');
 const webAppRoutes = require('./routes/webAppRotes');
 const organizationRoutes = require('./routes/organizationRoutes');
 const projectRoutes = require('./routes/projectRoutes');
+const addUserRoutes = require('./routes/addUserRoutes'); // Ensure this is correct
+
 const connectDB = require('./config/db');
 const cors = require('cors');
 
@@ -17,7 +19,7 @@ const app = express();
 // Middleware - IMPORTANT: Order matters!
 app.use(cors({
   origin: ['https://project-manager-react-amber.vercel.app', 'http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002', '*'], // Add all possible origins
-  methods: ['GET', 'POST', 'PUT', 'OPTIONS'], // Explicitly allow POST
+  methods: ['GET', 'POST', 'PUT', 'OPTIONS', 'DELETE'], // Explicitly allow POST
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
@@ -29,6 +31,7 @@ app.use('/api/user', userRoutes);
 app.use('/api/webAppRoutes', webAppRoutes);
 app.use('/api/org', organizationRoutes);
 app.use('/api/proj', projectRoutes);
+app.use('/api/add-user', addUserRoutes); // Add new user routes
 
 // Error handling middleware
 app.use((err, req, res, next) => {
