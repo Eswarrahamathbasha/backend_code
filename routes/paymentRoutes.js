@@ -11,8 +11,8 @@ const MERCHANT_BASE_URL = "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1
 const MERCHANT_STATUS_URL = "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/status";
 
 const REDIRECT_URL = "http://localhost:3000/api/payment/status";
-const SUCCESS_URL = "http://localhost:3001/payment-success";
-const FAILURE_URL = "http://localhost:3001/payment-failure";
+const SUCCESS_URL = process.env.SUCCESS_URL;
+const FAILURE_URL = process.env.FAILURE_URL;
 
 // Route to create an order
 router.post('/create-order', async (req, res) => {
