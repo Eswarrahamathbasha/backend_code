@@ -5,6 +5,8 @@ const webAppRoutes = require('./routes/webAppRotes');
 const organizationRoutes = require('./routes/organizationRoutes');
 const projectRoutes = require('./routes/projectRoutes');
 const addUserRoutes = require('./routes/addUserRoutes'); // Ensure this is correct
+const serviceRoutes = require('./routes/serviceRoutes');
+const paymentRoutes = require('./routes/paymentRoutes'); // Import payment routes
 
 const connectDB = require('./config/db');
 const cors = require('cors');
@@ -32,6 +34,8 @@ app.use('/api/webAppRoutes', webAppRoutes);
 app.use('/api/org', organizationRoutes);
 app.use('/api/proj', projectRoutes);
 app.use('/api/add-user', addUserRoutes); // Add new user routes
+app.use('/api', serviceRoutes);
+app.use('/api/payment', paymentRoutes); // Payment-related routes
 
 // Error handling middleware
 app.use((err, req, res, next) => {
