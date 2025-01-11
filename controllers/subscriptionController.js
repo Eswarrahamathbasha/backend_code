@@ -1,91 +1,62 @@
-const Subscription = require('../models/subscription');
-
-/**
- * Updates or creates a subscription for a user based on their email.
- * @param {Object} req - The request object containing email, type, details, id, and status.
- * @param {Object} res - The response object to send results.
- */
-const upsertSubscription = async (req, res) => {
-  const { email, type, details, id, status } = req.body;
-
-  // Validate required fields
-  if (!email || !type || !details || !id || !status) {
-    return res.status(400).json({ success: false, message: 'All fields are required' });
+const Subscription = require('../models/subscriptionModel');
+ 
+// Valid subscription types
+const validSubscriptionTypes = ['Free trial', 'Organization'];
+ 
+// Function to check if a user already has an active subscription
+const checkActiveSubscription = async (userId) => {
+  const existingSubscription = await Subscription.findOne({ user: userId });
+  if (existingSubscription) {
+    return {
+      success: false,
+      message: 'You already have an active subscription.',
+    };
   }
-
-  // Additional validation for field formats
-  if (!email.includes('@')) {
-    return res.status(400).json({ success: false, message: 'Invalid email format' });
-  }
-
-  if (!['Free', 'Basic', 'Premium'].includes(type)) {
-    return res.status(400).json({ success: false, message: 'Invalid subscription type' });
-  }
-
-  if (!['Active', 'Expired', 'Pending'].includes(status)) {
-    return res.status(400).json({ success: false, message: 'Invalid subscription status' });
-  }
-
+  return null; // No active subscription, proceed with creation
+};
+ 
+// Function to create a new subscription
+const createSubscription = async (req, res) => {
   try {
-    // Upsert the subscription
-    const subscription = await Subscription.findOneAndUpdate(
-      { email },
-      { email, type, details, id, status },
-      { new: true, upsert: true } // Create if not found
-    );
-
-    if (!subscription) {
-      console.error('Database Error: Failed to update or create subscription.');
-      return res.status(500).json({ success: false, message: 'Failed to update or create subscription.' });
+    const { subscriptionType } = req.body;
+    const userId = req.user._id; // User ID from the token
+ 
+    // Validate subscription type
+    if (!validSubscriptionTypes.includes(subscriptionType)) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid subscription type. Allowed types are: ${validSubscriptionTypes.join(', ')}.`,
+      });
     }
-
-    console.log('Subscription successfully updated or created:', subscription);
-    res.status(200).json({ success: true, data: subscription });
-  } catch (error) {
-    console.error('Error in upsertSubscription:', error);
-    res.status(500).json({ success: false, message: 'Internal server error.' });
-  }
-};
-
-/**
- * Retrieves subscription details by a user's email.
- * @param {Object} req - The request object containing email as a parameter.
- * @param {Object} res - The response object to send results.
- */
-const getSubscriptionByEmail = async (req, res) => {
-  const { email } = req.params;
-
-  // Validate email parameter
-  if (!email) {
-    console.error('Validation Error: Missing email parameter in getSubscriptionByEmail.');
-    return res.status(400).json({ success: false, message: 'Email is required as a parameter.' });
-  }
-
-  if (!email.includes('@')) {
-    return res.status(400).json({ success: false, message: 'Invalid email format' });
-  }
-
-  try {
-    // Fetch subscription by email
-    const subscription = await Subscription.findOne({ email });
-
-    if (!subscription) {
-      console.error('Not Found: No subscription found for email:', email);
-      return res.status(404).json({ success: false, message: 'Subscription not found.' });
+ 
+    // Check for existing active subscription
+    const activeSubscriptionError = await checkActiveSubscription(userId);
+    if (activeSubscriptionError) {
+      return res.status(400).json(activeSubscriptionError);
     }
-
-    console.log('Subscription retrieved successfully:', subscription);
-    res.status(200).json({ success: true, data: subscription });
+ 
+    // Create a new subscription for the user
+    const newSubscription = new Subscription({
+      user: userId,
+      subscriptionType,
+      startDate: new Date(),
+      endDate: new Date(new Date().setFullYear(new Date().getFullYear() + 1)), // 1-year subscription
+    });
+ 
+    await newSubscription.save();
+ 
+    res.status(201).json({
+      success: true,
+      message: `You have successfully subscribed to the ${subscriptionType} plan.`,
+      subscription: newSubscription,
+    });
   } catch (error) {
-    console.error('Error in getSubscriptionByEmail:', error);
-    res.status(500).json({ success: false, message: 'Internal server error.' });
+    console.error('Subscription error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'An error occurred while processing your subscription.',
+    });
   }
 };
-
-// Debug log to ensure functions are correctly exported
-console.log('Exporting upsertSubscription and getSubscriptionByEmail functions.');
-
-module.exports = {
-  upsertSubscription,
-  getSubscriptionByEmail,
-};
+ 
+module.exports = { createSubscription };

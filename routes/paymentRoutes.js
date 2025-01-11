@@ -5,14 +5,14 @@ const { v4: uuidv4 } = require('uuid');
 const router = express.Router();
 
 // Merchant Configuration
-const MERCHANT_KEY = process.env.MERCHANT_KEY;
-const MERCHANT_ID = process.env.MERCHANT_ID;
+const MERCHANT_KEY = "96434309-7796-489d-8924-ab56988a6076";
+const MERCHANT_ID = "PGTESTPAYUAT86";
 const MERCHANT_BASE_URL = "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay";
 const MERCHANT_STATUS_URL = "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/status";
 
 const REDIRECT_URL = "http://localhost:3000/api/payment/status";
-const SUCCESS_URL = process.env.SUCCESS_URL;
-const FAILURE_URL = process.env.FAILURE_URL;
+const SUCCESS_URL = "http://localhost:3001/subscriptions";
+const FAILURE_URL = "http://localhost:3001/payment-failure";
 
 // Route to create an order
 router.post('/create-order', async (req, res) => {

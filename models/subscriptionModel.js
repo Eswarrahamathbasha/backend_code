@@ -1,9 +1,11 @@
 const mongoose = require('mongoose');
-
-const subscriptionSchema = new mongoose.Schema({
-    name: { type: String, required: true }, // e.g., "Free Trial", "Basic", "Premium"
-    price: { type: Number, required: true },
-    duration: { type: Number, required: true }, // Duration in days
+ 
+const SubscriptionSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  subscriptionType: { type: String, required: true, 
+  enum: ['FreeTrial', 'Organization'] },
+  startDate: { type: Date, default: Date.now },
+  endDate: { type: Date, required: true },
 }, { timestamps: true });
-
-module.exports = mongoose.model('Subscription', subscriptionSchema);
+ 
+module.exports = mongoose.model('Subscription', SubscriptionSchema);
