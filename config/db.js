@@ -11,8 +11,8 @@ const connectDB = async () => {
     while (retries) {
         try {
             const conn = await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/subscription-app', {
-                useNewUrlParser: true,
-                useUnifiedTopology: true,
+                useNewUrlParser: true, // Keep this for compatibility with older versions of MongoDB
+                // Removed useUnifiedTopology, since it's no longer needed in MongoDB 4.x+ drivers
             });
             console.log(`MongoDB Connected: ${conn.connection.host}`); // Log the host to which MongoDB is connected
             break; // Exit the retry loop on successful connection
