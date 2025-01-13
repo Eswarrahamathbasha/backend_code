@@ -57,8 +57,11 @@ const initializeServer = async () => {
     app.use('/api/proj', require('./routes/projectRoutes'));
     app.use('/api/add-user', require('./routes/addUserRoutes'));
     app.use('/api', require('./routes/serviceRoutes'));
-    app.use('/api/hubingest', require('./routes/hubingestRoutes'));
     app.use('/api/subscriptions', require('./routes/subscriptionRoutes'));
+
+    // Integrating the 'hubingestRoutes'
+    const hubIngestRoutes = require('./routes/hubingestRoutes');
+    app.use('/api/hubingest', hubIngestRoutes); // Integrating the hubIngest route
 
     // Health check route
     app.get('/', (req, res) => {
