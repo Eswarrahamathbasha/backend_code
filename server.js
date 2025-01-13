@@ -57,7 +57,7 @@ const initializeServer = async () => {
     app.use('/api/proj', require('./routes/projectRoutes'));
     app.use('/api/add-user', require('./routes/addUserRoutes'));
     app.use('/api', require('./routes/serviceRoutes'));
-    app.use('/api/hubingest', require('./routes/hubIngestRoutes'));
+    app.use('/api/hubingest', require('./routes/hubingestRoutes'));
     app.use('/api/subscriptions', require('./routes/subscriptionRoutes'));
 
     // Health check route
